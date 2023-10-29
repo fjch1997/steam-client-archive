@@ -41,6 +41,9 @@ jobs:
           draft: true
           prerelease: false
 
+      - name: Zip
+        run: zip archive/${{steps.archive_steam.outputs.Version}}.zip archive/${{steps.archive_steam.outputs.Version}}/* -r
+
       - name: Publish all release assets
         uses: SourceSprint/upload-multiple-releases@1.0.7
         if: ${{steps.archive_steam.outputs.NewVersionArchived}}
@@ -49,7 +52,7 @@ jobs:
         with:
           tag_name: ${{steps.archive_steam.outputs.Version}}
           # Path / filetype config
-          release_config: archive/${{steps.archive_steam.outputs.Version}}/*
+          release_config: archive/${{steps.archive_steam.outputs.Version}}.zip
           # Specify release name
           release_name: ${{steps.archive_steam.outputs.Version}}
           
