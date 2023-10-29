@@ -64,6 +64,8 @@ if (archiveNeeded) {
     await fsPromises.writeFile(`${baseDirectory}/${version}/steam_client_ubuntu12`, manifestTexts.ubuntu12);
     await fsPromises.writeFile(`${baseDirectory}/${version}/steam_client_osx`, manifestTexts.osx);
     await downloadFile("https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe", "SteamSetup.exe");
+    await downloadFile("https://cdn.cloudflare.steamstatic.com/client/installer/steam.dmg", "steam.dmg");
+    await downloadFile("https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb", "steam.deb");
     for (const file of files) {
         await downloadFile(`https://media.steampowered.com/client/${file}`, file);
     }
