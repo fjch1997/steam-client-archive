@@ -30,6 +30,7 @@ jobs:
          node index.js
         
       - name: Zip
+        if: ${{steps.archive_steam.outputs.NewVersionArchived}}
         run: zip archive/${{steps.archive_steam.outputs.Version}}.zip archive/${{steps.archive_steam.outputs.Version}}/* -r
 
       - name: Publish all release assets
