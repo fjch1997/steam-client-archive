@@ -28,19 +28,7 @@ jobs:
         run: |
          npm install
          node index.js
-         
-      - name: Create Draft Release
-        id: create_release
-        uses: actions/create-release@v1
-        if: ${{steps.archive_steam.outputs.NewVersionArchived}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{steps.archive_steam.outputs.Version}}
-          release_name: ${{steps.archive_steam.outputs.Version}}
-          draft: true
-          prerelease: false
-
+        
       - name: Zip
         run: zip archive/${{steps.archive_steam.outputs.Version}}.zip archive/${{steps.archive_steam.outputs.Version}}/* -r
 
@@ -55,10 +43,3 @@ jobs:
           release_config: archive/${{steps.archive_steam.outputs.Version}}.zip
           # Specify release name
           release_name: ${{steps.archive_steam.outputs.Version}}
-          
-      - uses: eregon/publish-release@v1
-        if: ${{steps.archive_steam.outputs.NewVersionArchived}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ steps.create_release.outputs.id }}
