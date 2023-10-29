@@ -40,10 +40,14 @@ const allFilesInManifest = (manifestObject) => {
         return [];
     }
     const keys = Object.entries(manifestObject);
-    const isFile = (name) => name === "file" || name === "zipvz";
-    const files = keys.filter(k => isFile(k[0])).map(i => i[1])
-    const children = keys.filter(k => !isFile(k[0])).map(i => i[1])
-    return [...files, ...children.map(i => allFilesInManifest(i)).flat()];
+    const file = keys.find(k => k[0] === "file");
+    const zipvz = keys.find(k => k[0] === "zipvz");
+    const rest = keys.map(i => allFilesInManifest(i[1])).flat();
+    // Skip zip file if zip.vz file exist. This is the behavior of the Steam bootstrapper.
+    if (zipvz ?? file) {
+        return [(zipvz ?? file)[1], ...rest];
+    }
+    return rest;
 }
 const manifestsArray = [manifests.win32, manifests.ubuntu12, manifests.osx];
 const files = [...new Set(manifestsArray.map(m => allFilesInManifest(m)).flat())];
