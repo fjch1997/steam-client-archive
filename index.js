@@ -9,7 +9,7 @@ const archivedLocally = async (version) => new Promise(resolve => {
     fsPromises.access(`${baseDirectory}/${version}`).then(() => resolve(true)).catch(() => resolve(false));
 });
 const archivedOnGithub = async (version) => {
-    const response = await fetch(`https://github.com/fjch1997/steam-client-archive/releases/${version}`);
+    const response = await fetch(`https://github.com/fjch1997/steam-client-archive/releases/tag/${version}`);
     switch (response.status) {
         case 200:
             return true;
