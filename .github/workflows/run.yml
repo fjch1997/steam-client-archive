@@ -1,0 +1,59 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  schedule:
+    - cron: '0 0 * * *'    
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a set of commands using the runners shell
+      - name: Archive Steam
+        id: archive_steam
+        run: |
+         npm install
+         node index.js
+      - name: Create Draft Release
+        id: create_release
+        uses: actions/create-release@v1
+        if: ${{steps.archive_steam.outputs.NewVersionArchived}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: actions/create-release@v1
+          release_name: ${{steps.archive_steam.outputs.Version}}
+          draft: true
+          prerelease: false
+
+      - name: Publish all release assets
+        uses: SourceSprint/upload-multiple-releases@1.0.7
+        if: ${{steps.archive_steam.outputs.NewVersionArchived}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Path / filetype config
+          release_config: archive/${{steps.archive_steam.outputs.Version}}
+          # Specify release name
+          release_name: ${{steps.archive_steam.outputs.Version}}
+          
+      - uses: eregon/publish-release@v1
+        if: ${{steps.archive_steam.outputs.NewVersionArchived}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
