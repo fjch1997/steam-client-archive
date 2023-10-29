@@ -35,7 +35,7 @@ jobs:
 
       - name: Publish all release assets
         uses: SourceSprint/upload-multiple-releases@1.0.7
-        if: ${{$steps.archive_steam.outputs.NewVersionArchived == 'true'}}
+        if: ${{steps.archive_steam.outputs.NewVersionArchived == 'true'}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
